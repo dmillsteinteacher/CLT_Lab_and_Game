@@ -20,7 +20,6 @@ def get_pop_data(ptype):
     elif ptype == "Right Skewed (Income)":
         return np.random.exponential(20, size)
     elif ptype == "Left Skewed (Easy Test)":
-        # Mirroring the exponential to the left
         return 100 - np.random.exponential(20, size)
     elif ptype == "Bimodal (Two Species)":
         return np.concatenate([np.random.normal(25, 5, size//2), np.random.normal(75, 5, size//2)])
@@ -39,7 +38,6 @@ with tab1:
     
     with col_ctrl:
         st.subheader("Controls")
-        # Ordered by difficulty for better "Talk Track"
         pop_options = [
             "Normal", 
             "Uniform", 
@@ -52,25 +50,23 @@ with tab1:
         l_pop_type = st.selectbox("Pick a World Shape", pop_options, key="l_pop")
         l_n = st.slider("Sample Size (n)", min_value=1, max_value=100, value=2, key="l_n")
         
-        st.info("""
-        **Vibe Check:**
-        * Large **n** is like a "smoothing" filter.
-        * No matter how tilted or broken the world is, the sampling distribution wants to be a Bell Curve.
-        """)
+        st.info("**Vibe Check:** Notice how averaging acts as a filter for the 'ugliness' of the parent population.")
 
     l_data = get_pop_data(l_pop_type)
     l_means = np.mean(np.random.choice(l_data, size=(2000, l_n)), axis=1)
 
     with col_plot:
-        # Population Plot
+        # Population Plot - FIXED: removed singular 'color', added plural 'colors'
         fig1 = ff.create_distplot([l_data], ["Population"], show_hist=True, show_rug=False, colors=['#3366CC'])
         fig1.update_layout(height=300, title="The Population (The 'True' World)", margin=dict(t=30, b=0))
-        st.plotly_chart(fig1, use_container_width=True)
+        # FIXED: use_container_width=True replaced with width='stretch'
+        st.plotly_chart(fig1, width='stretch')
         
-        # Sampling Distribution Plot
+        # Sampling Distribution Plot - FIXED: plural 'colors' only
         fig2 = ff.create_distplot([l_means], ["Sampling Dist"], show_hist=True, colors=['#109618'])
         fig2.update_layout(height=400, title=f"The Sampling Distribution (n={l_n})", margin=dict(t=30, b=0))
-        st.plotly_chart(fig2, use_container_width=True)
+        # FIXED: width='stretch'
+        st.plotly_chart(fig2, width='stretch')
         
         st.write(f"**$\mu$:** {np.mean(l_data):.2f} | **$\mu_{\\bar{x}}$:** {np.mean(l_means):.2f} | **$SD_{\\bar{x}}$:** {np.std(l_means):.2f}")
 
@@ -80,7 +76,7 @@ with tab2:
     st.write("A mystery population has been generated. Find the **minimum n** required to use Normal Inference.")
 
     if 'mystery_type' not in st.session_state:
-        st.session_state.mystery_type = np.random.choice(pop_options[1:]) # Don't pick Normal for the game
+        st.session_state.mystery_type = np.random.choice(pop_options[1:])
     
     g_n = st.number_input("Test a Sample Size (n):", min_value=1, max_value=100, value=2)
     
@@ -95,9 +91,11 @@ with tab2:
     col_g1, col_g2 = st.columns([2, 1])
     
     with col_g1:
+        # Mystery Plot - FIXED: plural 'colors'
         fig_g = ff.create_distplot([g_means], ["Mystery Dist"], show_hist=True, colors=['#FF9900'])
         fig_g.update_layout(height=450, title=f"Testing Sampling Distribution with n={g_n}")
-        st.plotly_chart(fig_g, use_container_width=True)
+        # FIXED: width='stretch'
+        st.plotly_chart(fig_g, width='stretch')
         
     with col_g2:
         st.subheader("Normality Meter")
@@ -113,7 +111,7 @@ with tab2:
                     st.rerun()
         else:
             st.error("❌ PERMISSION DENIED")
-            st.write("Still too much 'Parental Influence' from the ugly population.")
+            st.write("The CLT hasn't smoothed out the parent population's influence yet.")
             st.warning("Increase **n** and try again!")
 
     st.divider()
