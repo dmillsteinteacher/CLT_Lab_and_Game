@@ -17,8 +17,10 @@ def get_pop_data(ptype):
     elif ptype == "Uniform":
         return np.random.uniform(0, 100, size)
     elif ptype == "Right Skewed":
+        # Exponential mean is 20
         return np.random.exponential(20, size)
     elif ptype == "Left Skewed":
+        # Shifted exponential mean is 80
         return 100 - np.random.exponential(20, size)
     elif ptype == "Bimodal":
         return np.concatenate([np.random.normal(25, 5, size//2), np.random.normal(75, 5, size//2)])
@@ -31,7 +33,7 @@ tab1, tab2 = st.tabs(["🔬 Tab 1: Single Population Lab", "📊 Tab 2: Comparat
 
 pop_options = ["Normal", "Uniform", "Right Skewed", "Left Skewed", "Bimodal", "U-Shape"]
 
-# --- TAB 1: SINGLE LAB (RETAINED AS BASELINE) ---
+# --- TAB 1: SINGLE LAB ---
 with tab1:
     st.header("Deep Dive: The 'Normalizer' in Action")
     col_ctrl, col_plot = st.columns([1, 3])
@@ -58,31 +60,25 @@ with tab2:
     st.header("The Universal Laws of Sampling")
     st.write("Scrub the slider to watch 6 different worlds obey the same statistical laws simultaneously.")
 
-    # Using a slider for the 'Scrubbing' effect
     c_n = st.slider("Select Sample Size (n):", min_value=1, max_value=100, value=1, key="comp_n_slider")
     
     st.divider()
 
-    # Create 3 columns x 2 rows
     cols = st.columns(3)
     
     for idx, p_type in enumerate(pop_options):
         with cols[idx % 3]:
-            # Generate Population Data for Parameters
             c_data = get_pop_data(p_type)
             p_mu = np.mean(c_data)
             p_sigma = np.std(c_data)
             
-            # Generate Sampling Distribution
             c_means = np.mean(np.random.choice(c_data, size=(1000, c_n)), axis=1)
             s_mu = np.mean(c_means)
             s_se = np.std(c_means)
             t_se = p_sigma / np.sqrt(c_n)
             
-            # Color logic for visual feedback
             color = '#FF9900' if c_n < 30 else '#109618'
             
-            # Plot
             fig_c = ff.create_distplot([c_means], [p_type], show_hist=True, show_curve=False, show_rug=False, colors=[color])
             fig_c.update_layout(
                 height=250, 
@@ -94,7 +90,6 @@ with tab2:
             )
             st.plotly_chart(fig_c, key=f"comp_plot_{p_type}", use_container_width=True)
             
-            # Display the side-by-side math
             st.markdown(f"""
             **Pop:** $\mu={p_mu:.1f}, \sigma={p_sigma:.1f}$  
             **Sample x̄:** $\mu_{{\\bar{{x}}}}={s_mu:.1f}$  
@@ -102,7 +97,8 @@ with tab2:
             """)
             st.write("---")
 
-    st.success(f"**Insight:** Notice how $\mu_{{\\bar{{x}}}}$ stays near {p_mu:.1f} regardless of $n$, while SE shrinks consistently.")
+    # FIXED: Changed from hardcoded 50.3 to the general parameter mu
+    st.success(fr"**Insight:** Notice how $\mu_{{\bar{{x}}}}$ stays near the population $\mu$ regardless of $n$, while the Standard Error (SE) shrinks consistently as $n$ increases.")
 
 # --- PADDING ---
 # .............................................................................
