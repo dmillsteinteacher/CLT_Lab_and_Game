@@ -18,7 +18,7 @@ def get_pop_data(ptype):
         return np.random.normal(50, 15, size)
     elif ptype == "Uniform":
         return np.random.uniform(0, 100, size)
-    elif ptype == "Right Skewed (Income)":
+    elif ptype == "Right Skedwed (Income)":
         return np.random.exponential(20, size)
     elif ptype == "Left Skewed (Easy Test)":
         return 100 - np.random.exponential(20, size)
@@ -70,7 +70,7 @@ with tab1:
 # --- TAB 2: NAME THAT POPULATION ---
 with tab2:
     st.header("The Challenge: Name That Population")
-    st.write("Can you spot the 'DNA' of the parent population before the CLT washes it away?")
+    st.write("Commit to a sample size and make your guess. Remember: larger $n$ values make the parent's identity harder to see!")
 
     if 'mystery_type' not in st.session_state:
         st.session_state.mystery_type = np.random.choice(pop_options)
@@ -80,8 +80,17 @@ with tab2:
     col_g1, col_g2 = st.columns([2, 1])
     
     with col_g2:
-        st.subheader("Difficulty Slider")
-        g_n = st.slider("Select n (Higher n = More Blur)", min_value=1, max_value=60, value=1, key="g_n")
+        st.subheader("The Challenge")
+        # CHANGED: Replaced slider with number_input for suspense
+        g_n = st.number_input(
+            "Enter Sample Size (n):", 
+            min_value=1, 
+            max_value=100, 
+            value=1, 
+            step=1, 
+            key="g_n_input"
+        )
+        
         show_normal = st.checkbox("Overlay Normal Reference", value=False)
         
         st.write("---")
@@ -91,6 +100,7 @@ with tab2:
         if st.button("Final Answer"):
             st.session_state.revealed = True
 
+    # Simulation with the manually entered n
     g_data = get_pop_data(st.session_state.mystery_type)
     g_means = np.mean(np.random.choice(g_data, size=(1500, g_n)), axis=1)
 
@@ -102,8 +112,8 @@ with tab2:
     if st.session_state.revealed:
         if user_guess == st.session_state.mystery_type:
             st.success(f"🎯 **Correct!** It was **{st.session_state.mystery_type}**.")
-            if g_n > 15:
-                st.info(f"Impressive! Identifying **{st.session_state.mystery_type}** at n={g_n} is hard because it's already very Normal.")
+            if g_n > 20:
+                st.info(f"Statistics Master! You identified the shape even after the CLT smoothed it out with n={g_n}.")
             st.balloons()
         else:
             st.error(f"❌ **Incorrect.** You guessed {user_guess}, but it was actually **{st.session_state.mystery_type}**.")
@@ -114,7 +124,7 @@ with tab2:
             st.rerun()
 
     st.divider()
-    st.caption("Pedagogical Goal: Realize that 'Normal enough' happens at different n-values for different populations. $n=30$ is a safety net, not a requirement for all shapes.")
+    st.caption("Pedagogical Goal: Notice how convergence speeds vary. Normal and Uniform shapes become indistinguishable quickly, while Bimodal and U-shapes persist longer.")
 
 # --- PADDING ---
 # .............................................................................
