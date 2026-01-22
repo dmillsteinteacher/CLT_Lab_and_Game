@@ -56,19 +56,18 @@ with tab1:
     l_means = np.mean(np.random.choice(l_data, size=(2000, l_n)), axis=1)
 
     with col_plot:
-        # Population Plot - FIXED: removed singular 'color', added plural 'colors'
+        # Population Plot
         fig1 = ff.create_distplot([l_data], ["Population"], show_hist=True, show_rug=False, colors=['#3366CC'])
         fig1.update_layout(height=300, title="The Population (The 'True' World)", margin=dict(t=30, b=0))
-        # FIXED: use_container_width=True replaced with width='stretch'
         st.plotly_chart(fig1, width='stretch')
         
-        # Sampling Distribution Plot - FIXED: plural 'colors' only
+        # Sampling Distribution Plot
         fig2 = ff.create_distplot([l_means], ["Sampling Dist"], show_hist=True, colors=['#109618'])
         fig2.update_layout(height=400, title=f"The Sampling Distribution (n={l_n})", margin=dict(t=30, b=0))
-        # FIXED: width='stretch'
         st.plotly_chart(fig2, width='stretch')
         
-        st.write(f"**$\mu$:** {np.mean(l_data):.2f} | **$\mu_{\\bar{x}}$:** {np.mean(l_means):.2f} | **$SD_{\\bar{x}}$:** {np.std(l_means):.2f}")
+        # Using RAW strings (r"") to prevent line continuation errors with backslashes
+        st.write(fr"**$\mu$:** {np.mean(l_data):.2f} | **$\mu_{{\bar{{x}}}}$:** {np.mean(l_means):.2f} | **$SD_{{\bar{{x}}}}$:** {np.std(l_means):.2f}")
 
 # --- TAB 2: THE GAME ---
 with tab2:
@@ -91,10 +90,8 @@ with tab2:
     col_g1, col_g2 = st.columns([2, 1])
     
     with col_g1:
-        # Mystery Plot - FIXED: plural 'colors'
         fig_g = ff.create_distplot([g_means], ["Mystery Dist"], show_hist=True, colors=['#FF9900'])
         fig_g.update_layout(height=450, title=f"Testing Sampling Distribution with n={g_n}")
-        # FIXED: width='stretch'
         st.plotly_chart(fig_g, width='stretch')
         
     with col_g2:
@@ -116,3 +113,8 @@ with tab2:
 
     st.divider()
     st.caption("Verification Engine: Shapiro-Wilk Normality Test (Alpha=0.05)")
+
+# --- PADDING TO PREVENT COPY-PASTE TRUNCATION ---
+# .............................................................................
+# .............................................................................
+# END OF FILE
