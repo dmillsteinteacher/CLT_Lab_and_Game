@@ -17,10 +17,8 @@ def get_pop_data(ptype):
     elif ptype == "Uniform":
         return np.random.uniform(0, 100, size)
     elif ptype == "Right Skewed":
-        # Exponential mean is 20
         return np.random.exponential(20, size)
     elif ptype == "Left Skewed":
-        # Shifted exponential mean is 80
         return 100 - np.random.exponential(20, size)
     elif ptype == "Bimodal":
         return np.concatenate([np.random.normal(25, 5, size//2), np.random.normal(75, 5, size//2)])
@@ -47,7 +45,7 @@ with tab1:
     
     with col_plot:
         fig1 = ff.create_distplot([l_data], ["Pop"], show_hist=True, show_curve=False, show_rug=False, colors=['#3366CC'])
-        fig1.update_layout(height=250, title="Parent Population", margin=dict(t=30, b=0), showlegend=False)
+        fig1.update_layout(height=250, title="Parent Population Distribution", margin=dict(t=30, b=0), showlegend=False)
         st.plotly_chart(fig1, key="l_fig1")
         
         fig2 = ff.create_distplot([l_means], ["Sampling"], show_hist=True, show_curve=False, show_rug=False, colors=['#109618'])
@@ -97,8 +95,8 @@ with tab2:
             """)
             st.write("---")
 
-    # FIXED: Changed from hardcoded 50.3 to the general parameter mu
-    st.success(fr"**Insight:** Notice how $\mu_{{\bar{{x}}}}$ stays near the population $\mu$ regardless of $n$, while the Standard Error (SE) shrinks consistently as $n$ increases.")
+    # FIXED: Using a raw string (fr) to ensure LaTeX renders the symbol mu instead of a variable value
+    st.success(fr"**Insight:** Notice how the mean of the sampling distribution ($\mu_{{\bar{{x}}}}$) stays near the population $\mu$ regardless of $n$, while the Standard Error (SE) shrinks consistently as $n$ increases.")
 
 # --- PADDING ---
 # .............................................................................
